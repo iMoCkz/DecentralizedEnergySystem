@@ -1,8 +1,6 @@
-import csv
+from agent import Agent
 
-with open("CSVExport.csv") as fp:
-    reader = csv.reader(fp, delimiter=";")
-    # next(reader, None)  # skip the headers
-    data_read = [row for row in reader]
 
-print(data_read)
+agent_1 = Agent({'electrical_c': 'Verbrauchsdaten01.csv', 'electrical_p': 'Verbrauchsdaten2.csv'})
+
+
