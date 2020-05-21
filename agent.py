@@ -10,6 +10,8 @@ def _read_file(path):
 
 class Agent:
     def __init__(self, data):
+        self._market = None
+
         self.electrical_consumption = 0
         # self.electrical_production = 0
         self.electrical_storage = 0
@@ -28,28 +30,35 @@ class Agent:
         for key, val in data.items():
             self._get_data(key, val)
 
-        test = self._electrical_consumption_data[:5]
+        # test = self._electrical_consumption_data[:5]
+        #
+        # print(test.pop(0))
+        # print(test.pop(0))
+        # print(test.pop(0))
+        # print(test.pop(0))
+        # print(test.pop(0))
 
-        print(test.pop(0))
-        print(test.pop(0))
-        print(test.pop(0))
-        print(test.pop(0))
-        print(test.pop(0))
+    @property
+    def marketplace(self):
+        return self._market
 
+    @marketplace.setter
+    def marketplace(self, market):
+        self._market = market
 
-    def _get_data(self, key, value):
+    def _get_data(self, key, path):
         if key == 'electrical_c':
-            self._electrical_consumption_data = _read_file(value)
+            self._electrical_consumption_data = _read_file(path)
         elif key == 'thermal_c':
-            self._thermal_consumption_data = _read_file(value)
+            self._thermal_consumption_data = _read_file(path)
         elif key == 'electrical_p':
-            self._electrical_production_data = _read_file(value)
+            self._electrical_production_data = _read_file(path)
         elif key == 'thermal_p':
-            self._thermal_production_data = _read_file(value)
+            self._thermal_production_data = _read_file(path)
         elif key == 'electrical_s':
-            self._electrical_storage_data = _read_file(value)
+            self._electrical_storage_data = _read_file(path)
         elif key == 'thermal_s':
-            self._thermal_storage_data = _read_file(value)
+            self._thermal_storage_data = _read_file(path)
 
     def step(self):
         if self._electrical_production_data is not None:
@@ -60,7 +69,7 @@ class Agent:
             if self.electrical_storage >= consumption:
                 self.electrical_storage -= consumption
             else:
-                if self.electrical_storage - consumption
+                pass
 
 
 
