@@ -1,11 +1,24 @@
 import csv
 
 
-def _read_file(path):
+def _read_file(path, delimiter):
     with open(path) as fp:
-        reader = csv.reader(fp, delimiter=";")
+        reader = csv.reader(fp, delimiter=delimiter)
         next(reader, None)  # skip the headers
-        return [row for row in reader]
+        return [row for row in reader if row]
+
+
+def _pool_values(matrix, pool_cnt):
+    index = 0
+    squeezed_m = []
+
+    for idx in range(0, len(matrix), pool_cnt):
+        squeezed_m.append([index,
+                           matrix[idx][1],
+                           sum([float(row[2]) for row in matrix[idx:idx + pool_cnt]])])
+        index = index + 1
+
+    return squeezed_m
 
 
 class Agent:
@@ -33,21 +46,21 @@ class Agent:
         for key, val in data.items():
             self._get_data(key, val)
 
-        # test = self._electrical_consumption_data[:5]
-
     def _get_data(self, key, path):
         if key == 'electrical_c':
-            self._electrical_consumption_data = _read_file(path)
+            self._electrical_consumption_data = _read_file(path, ';')
+            self._electrical_consumption_data = _pool_values(self._electrical_consumption_data, 60)
         elif key == 'thermal_c':
-            self._thermal_consumption_data = _read_file(path)
+            self._thermal_consumption_data = _read_file(path, ';')
         elif key == 'electrical_p':
-            self._electrical_production_data = _read_file(path)
+            self._electrical_production_data = _read_file(path, ',')
+            print(self._electrical_production_data[3:5])
         elif key == 'thermal_p':
-            self._thermal_production_data = _read_file(path)
+            self._thermal_production_data = _read_file(path, ',')
         elif key == 'electrical_s':
-            self._electrical_storage_data = _read_file(path)
+            self._electrical_storage_data = _read_file(path, ';')
         elif key == 'thermal_s':
-            self._thermal_storage_data = _read_file(path)
+            self._thermal_storage_data = _read_file(path, ';')
 
     @property
     def marketplace(self):
