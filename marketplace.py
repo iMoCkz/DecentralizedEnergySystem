@@ -17,6 +17,7 @@ class Marketplace:
                 if offered_el_power - requested_amount >= 0:
                     agent.purchase_electrical_power(requested_amount)
                     print('{} buys {}kWh from {}'.format(requesting_agent.name, requested_amount, agent.name))
+                    requested_amount = 0
                 else:
                     requested_amount -= offered_el_power
                     agent.offered_electrical_power = 0
@@ -27,7 +28,7 @@ class Marketplace:
                 break
         # if there is no more agent offering electrical power, requesting agent will buy from the market
         if requested_amount > 0:
-            print('{} buys {}kWh from the grid operator'.format(requesting_agent.name, requested_amount))
+            print('{} buys {}kWh from grid operator'.format(requesting_agent.name, requested_amount))
 
     def request_thermal_energy(self, requesting_agent, amount):
         pass

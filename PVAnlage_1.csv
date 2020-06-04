@@ -2,7 +2,7 @@
 # Units: time in UTC, local_time in Europe/Berlin, electricity in kW, irradiance_direct in kW/m², irradiance_diffuse in kW/m², temperature in ºC
 # {"units": {"time": "UTC", "local_time": "Europe/Berlin", "electricity": "kW", "irradiance_direct": "kW/m\u00b2", "irradiance_diffuse": "kW/m\u00b2", "temperature": "\u00baC"}, "params": {"local_time": true, "header": true, "lat": "49.9564186074889", "lon": "9.472656249971816", "date_from": "2019-01-01", "date_to": "2019-12-31", "dataset": "merra2", "capacity": "1", "system_loss": "0.1", "tracking": "0", "tilt": "35", "azim": "180", "raw": true}}
 time,local_time,electricity,irradiance_direct,irradiance_diffuse,temperature
-2019-01-01 00:00,2019-01-01 01:00,0,0,0,4.209
+2019-01-01 00:00,2019-01-01 01:00,10,0,0,4.209
 2019-01-01 01:00,2019-01-01 02:00,0,0,0,4.233
 2019-01-01 02:00,2019-01-01 03:00,0,0,0,4.284
 2019-01-01 03:00,2019-01-01 04:00,0,0,0,4.317
