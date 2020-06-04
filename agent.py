@@ -15,7 +15,7 @@ def _pool_values(matrix, pool_cnt):
     for idx in range(0, len(matrix), pool_cnt):
         squeezed_m.append([index,
                            matrix[idx][1],
-                           sum([float(row[2]) for row in matrix[idx:idx + pool_cnt]])])
+                           round(sum([float(row[2]) for row in matrix[idx:idx + pool_cnt]]), 3)])
         index = index + 1
 
     return squeezed_m
@@ -37,12 +37,14 @@ class Agent:
     def __init__(self, name, data):
         self.name = name
         self._market = None
+        self.dates = []
 
         self._total_electrical_consumption = 0
         self._electricity_to_request = 0
         self._electrical_storage = 0
 
-        self._thermal_consumption = 0
+        self._total_thermal_consumption = 0
+        self._thermal_energy_to_request = 0
         self._thermal_storage = 0
 
         self._offered_electrical_power = 0
@@ -61,8 +63,10 @@ class Agent:
         if key == 'electrical_c':
             self._electrical_consumption_data = _read_file(path, ';')
             self._electrical_consumption_data = _pool_values(self._electrical_consumption_data, 60)
-            # remove leap day
+            # remove leap day (29.02.2016
             del self._electrical_consumption_data[1416:1440]
+            # dates
+            self.dates = [row[1] for row in self._electrical_consumption_data]
         elif key == 'thermal_c':
             self._thermal_consumption_data = _read_file(path, ';')
             self._thermal_consumption_data = _pool_values(self._thermal_consumption_data, 60)
@@ -104,24 +108,23 @@ class Agent:
             self._offered_thermal_power -= withdrawal
             self.thermal_storage -= withdrawal
         else:
-            # TODO: someone wants to buy more than offered
+            # should not happen based on marketplace logic
             print('Error while withdrawing thermal power.')
 
     def has_next(self):
         return len(self._electrical_consumption_data) > 0 and len(self._thermal_consumption_data) > 0
 
-    def load_step_data(self):
-        # energy turnover
+    def load_electricity_step_data(self):
         if self._electrical_production_data is not None:
             self._electrical_storage += float(self._electrical_production_data.pop(0)[1])
-            print("{}'s storage contains {}kWh.".format(self.name, self._electrical_storage))
+            print("  {} electrical storage: {:.3f}kWh".format(self.name, self._electrical_storage))
 
         if self._electrical_consumption_data is not None:
             self._total_electrical_consumption = self._electrical_consumption_data.pop(0)[2]
-            print('Consumption {}: {}'.format(self.name, self._total_electrical_consumption))
+            print("  {} electrical consumption: {:.3f}kWh".format(self.name, self._total_electrical_consumption))
 
-    def self_consumption(self):
-        if self._electrical_storage >= self._total_electrical_consumption:
+    def electrical_self_consumption(self):
+        if self._electrical_storage > 0 and self._electrical_storage >= self._total_electrical_consumption:
             self._electrical_storage -= self._total_electrical_consumption
         else:
             # deplete current electrical storage
@@ -130,13 +133,32 @@ class Agent:
         # set amount to offer on marketplace
         self._offered_electrical_power = self._electrical_storage
 
-    def purchase_on_market(self):
+    def purchase_electricity_on_market(self):
         if self._electricity_to_request > 0:
             self._market.request_electrical_energy(self, self._electricity_to_request)
 
+    def load_thermal_step_data(self):
+        if self._thermal_production_data is not None:
+            self._thermal_storage += float(self._thermal_production_data.pop(0)[1])
+            print("  {} thermal storage: {}l".format(self.name, self._thermal_storage))
 
+        if self._thermal_consumption_data is not None:
+            self._total_thermal_consumption = self._thermal_consumption_data.pop(0)[2]
+            print("  {} thermal consumption: {}l".format(self.name, self._total_thermal_consumption))
 
+    def thermal_self_consumption(self):
+        if self._thermal_storage > 0 and self._thermal_storage >= self._total_thermal_consumption:
+            self._thermal_storage -= self._total_thermal_consumption
+        else:
+            # deplete current electrical storage
+            self._thermal_energy_to_request = self._total_thermal_consumption - self._thermal_storage
+            self._thermal_storage = 0
+        # set amount to offer on marketplace
+        self._offered_thermal_power = self._thermal_storage
 
+    def purchase_thermal_energy_on_market(self):
+        if self._thermal_energy_to_request > 0:
+            self._market.request_thermal_energy(self, self._thermal_energy_to_request)
 
 
 
