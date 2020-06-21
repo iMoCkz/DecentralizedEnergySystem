@@ -9,11 +9,15 @@ a1_data = {'electrical_c': 'SumProfiles.Electricity_1.csv',
            'electrical_p': 'PVAnlage_1.csv'}
 agent_1 = Agent('Agent1', a1_data)
 agent_1.marketplace = marketplace
+agent_1.electrical_power_price = 0.25
+agent_1.thermal_power_price = 0.5
 
 a1_data = {'electrical_c': 'SumProfiles.Electricity_2.csv',
            'thermal_c': 'SumProfiles.WarmWater_2.csv'}
 agent_2 = Agent('Agent2', a1_data)
 agent_2.marketplace = marketplace
+agent_2.electrical_power_price = 0.26
+agent_2.thermal_power_price = 0.52
 print()
 
 while agent_1.has_next() and agent_2.has_next():

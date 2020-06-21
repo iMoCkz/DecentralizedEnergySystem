@@ -50,6 +50,9 @@ class Agent:
         self._offered_electrical_power = 0
         self._offered_thermal_power = 0
 
+        self._electrical_power_price = 0
+        self._thermal_power_price = 0
+
         self._electrical_consumption_data = None
         self._electrical_production_data = None
         self._thermal_consumption_data = None
@@ -102,6 +105,22 @@ class Agent:
     @property
     def offered_thermal_power(self):
         return self._offered_thermal_power
+
+    @property
+    def electrical_power_price(self):
+        return self._electrical_power_price
+
+    @electrical_power_price.setter
+    def electrical_power_price(self, price):
+        self._electrical_power_price = price
+
+    @property
+    def thermal_power_price(self):
+        return self._thermal_power_price
+
+    @thermal_power_price.setter
+    def thermal_power_price(self, price):
+        self._thermal_power_price = price
 
     def purchase_thermal_power(self, withdrawal):
         if self._offered_thermal_power - withdrawal >= 0:
